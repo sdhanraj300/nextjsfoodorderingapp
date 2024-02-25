@@ -38,6 +38,10 @@ export default function Header() {
   const session = useSession();
   const status = session?.status;
   const userData = session.data?.user;
+  let userName = userData?.name || userData?.email;
+  if (userName && userName.includes(" ")) {
+    userName = userName.split(" ")[0];
+  }
   return (
     <header>
       <div className="flex items-center md:hidden justify-between">
@@ -56,7 +60,7 @@ export default function Header() {
           <Link href={"/#contact"}>Contact</Link>
         </nav>
         <nav className="flex items-center gap-4 text-gray-500 font-semibold">
-          <AuthLinks status={status}/>
+          <AuthLinks status={status} userName={userName} />
         </nav>
       </div>
     </header>
