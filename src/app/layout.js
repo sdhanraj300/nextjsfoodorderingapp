@@ -1,8 +1,10 @@
 import Header from "../components/layout/Header";
 import "./globals.css";
+import firebase from "firebase/compat/app";
 import { Roboto } from "next/font/google";
 import AppProvider from "../app/AppProvider";
 const roboto = Roboto({ subsets: ["latin"], weight: ["400", "500", "700"] });
+
 
 export const metadata = {
   title: "Create Next App",

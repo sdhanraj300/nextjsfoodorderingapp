@@ -2,6 +2,16 @@
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Image from "next/image";
+import firebase from "firebase/app";
+import "firebase/storage";
+import { storage } from "../firebase";
+import {
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+  uploadTaskSnapshot,
+} from "firebase/storage";
+
 import { useEffect, useState } from "react";
 const ProfilePage = () => {
   const session = useSession();
@@ -20,15 +30,31 @@ const ProfilePage = () => {
   }, [session, status]);
 
   async function handleFileChange(e) {
-    const files = e.target.files;
-    if (files.length === 0) return;
-    if (files?.length === 1) {
-      const data = new FormData;
-      data.set("file", files[0]);
-      await fetch("/api/upload", {
-        method: "POST",
-        body: data,
-      });
+    const file = e.target.files[0];
+    if (file) {
+      const storageRef = ref(storage, `images/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`Upload is ${progress}% done`);
+        },
+        (error) => {
+          console.log(error);
+        },
+        async () => {
+          console.log("Upload complete");
+          // Get the download URL after upload
+          const downloadURL = await getDownloadURL(storageRef);
+          console.log("Download URL:", downloadURL);
+          setImage(downloadURL);
+        }
+      );
+    } else {
+      console.log("No file");
+      setImage("");
     }
   }
 
