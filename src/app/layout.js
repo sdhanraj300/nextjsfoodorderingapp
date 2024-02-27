@@ -1,10 +1,12 @@
 import Header from "../components/layout/Header";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 import firebase from "firebase/compat/app";
 import { Roboto } from "next/font/google";
 import AppProvider from "../app/AppProvider";
 const roboto = Roboto({ subsets: ["latin"], weight: ["400", "500", "700"] });
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const metadata = {
   title: "Create Next App",
@@ -17,6 +19,7 @@ export default function RootLayout({ children }) {
       <body className={roboto.className}>
         <main className="max-w-4xl mx-auto p-4">
           <AppProvider>
+            <ToastContainer />
             <Header />
             {children}
             <footer className="border-t-8 p-8 text-center text-gray-500 mt-16">
