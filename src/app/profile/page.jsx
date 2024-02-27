@@ -21,7 +21,7 @@ const ProfilePage = () => {
   const [saved, setSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [image, setImage] = useState("");
-  console.log(session);
+  // console.log(session);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -32,7 +32,10 @@ const ProfilePage = () => {
   async function handleFileChange(e) {
     const file = e.target.files[0];
     if (file) {
-      const storageRef = ref(storage, `images/${file.name}`);
+      const storageRef = ref(
+        storage,
+        `images/${file.name + new Date().getTime()}`
+      );
       const uploadTask = uploadBytesResumable(storageRef, file);
       uploadTask.on(
         "state_changed",
@@ -48,8 +51,15 @@ const ProfilePage = () => {
           console.log("Upload complete");
           // Get the download URL after upload
           const downloadURL = await getDownloadURL(storageRef);
-          console.log("Download URL:", downloadURL);
+          // console.log("Download URL:", downloadURL);
           setImage(downloadURL);
+
+          // Send image URL to the API route
+          const response = await fetch("/api/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: downloadURL }),
+          });
         }
       );
     } else {
