@@ -9,6 +9,8 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../firebase";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Link from "next/link";
+import UserTabs from "../../components/layout/UserTabs";
 
 const ProfilePage = () => {
   const session = useSession();
@@ -19,11 +21,12 @@ const ProfilePage = () => {
   const [postalCode, setPostalCode] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
-
+  const [isAdmin, setIsAdmin] = useState(false);
   const [saved, setSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [image, setImage] = useState("");
   const userImg = session?.data?.user?.image;
+  const [profileFetched, setProfileFetched] = useState(false);
   console.log(session);
 
   const [userImage, setUserImage] = useState(session?.data?.user?.image);
@@ -40,6 +43,8 @@ const ProfilePage = () => {
         setCountry(data.country);
         setPhone(data.phone);
         setPostalCode(data.postalCode);
+        setIsAdmin(data.admin);
+        setProfileFetched(true);
       });
   }, [session, status]);
 
@@ -108,7 +113,7 @@ const ProfilePage = () => {
     }
   }
 
-  if (status === "loading") {
+  if (status === "loading" || !profileFetched) {
     return "Loading...";
   }
 
@@ -118,7 +123,7 @@ const ProfilePage = () => {
 
   return (
     <section className="mt-8">
-      <h1 className="text-center text-primary text-4xl mb-4">Profile</h1>
+      <UserTabs isAdmin={isAdmin} />
       <div className="max-w-xs mx-auto">
         {saved && <InfoBox>Profile Saved...</InfoBox>}
         {isSaving && <SuccessBox>Saving...</SuccessBox>}
