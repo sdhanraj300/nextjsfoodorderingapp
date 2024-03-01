@@ -1,17 +1,12 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import Image from "next/image";
 import InfoBox from "../../components/layout/InfoBox";
 import SuccessBox from "../../components/layout/SuccessBox";
 import { useEffect, useState } from "react";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { storage } from "../firebase";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Link from "next/link";
 import UserTabs from "../../components/layout/UserTabs";
-
+import EditableImage from "../../components/layout/EditableImage";
+import { ToastContainer } from "react-toastify";
 const ProfilePage = () => {
   const session = useSession();
   const { status } = session;
@@ -27,7 +22,7 @@ const ProfilePage = () => {
   const [image, setImage] = useState("");
   const userImg = session?.data?.user?.image;
   const [profileFetched, setProfileFetched] = useState(false);
-  console.log(session);
+  // console.log(session);
 
   const [userImage, setUserImage] = useState(session?.data?.user?.image);
   useEffect(() => {
@@ -37,7 +32,7 @@ const ProfilePage = () => {
     fetch("/api/profile")
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setAddress(data.address);
         setCity(data.city);
         setCountry(data.country);
@@ -47,47 +42,6 @@ const ProfilePage = () => {
         setProfileFetched(true);
       });
   }, [session, status]);
-
-  async function handleFileChange(e) {
-    const file = e.target.files[0];
-    if (file) {
-      toast("Uploading the file...");
-      const storageRef = ref(
-        storage,
-        `images/${file.name + new Date().getTime()}`
-      );
-      const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(`Upload is ${progress}% done`);
-        },
-        (error) => {
-          console.log(error);
-        },
-        async () => {
-          console.log("Upload complete");
-          toast("Upload complete", { icon: "🎉" });
-          const downloadURL = await getDownloadURL(storageRef);
-          setImage(downloadURL);
-          setUserImage(downloadURL);
-          const response = await fetch("/api/upload", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: downloadURL }),
-          });
-          if (!response.ok) {
-            console.error("Failed to upload image to server.");
-          }
-        }
-      );
-    } else {
-      console.log("No file");
-      setImage("");
-    }
-  }
 
   async function handleProfileInfoUpdate(e) {
     e.preventDefault();
@@ -131,28 +85,7 @@ const ProfilePage = () => {
           <ToastContainer position="top-center" reverseOrder={false} />
           <div>
             <div className="p-2 rounded-lg relative max-w-[400px]">
-              {userImg && (
-                <Image
-                  className="w-full h-full mb-1"
-                  src={userImage ? userImage : userImg}
-                  width={250}
-                  height={250}
-                  alt={"avatar"}
-                />
-              )}
-              {!userImage && (
-                <div className="w-full h-full mb-1 bg-gray-200"></div>
-              )}
-              <label>
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-                <span className="block border border-gray-300 cursor-pointer rounded-lg p-2 text-center">
-                  Edit
-                </span>
-              </label>
+              <EditableImage link={userImg} setLink={setImage} />
             </div>
           </div>
           <form className="w-[600px]" onSubmit={handleProfileInfoUpdate}>
