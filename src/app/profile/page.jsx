@@ -78,7 +78,7 @@ const ProfilePage = () => {
   return (
     <section className="mt-8">
       <UserTabs isAdmin={isAdmin} />
-      <div className="max-w-xs mx-auto">
+      <div className="max-w-lg mx-auto">
         {saved && <InfoBox>Profile Saved...</InfoBox>}
         {isSaving && <SuccessBox>Saving...</SuccessBox>}
         <div className="flex gap-4 w-[500px]">
