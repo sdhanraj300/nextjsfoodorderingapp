@@ -51,23 +51,10 @@ const EditableImage = ({ link, setLink }) => {
     }
   };
 
-  useEffect(() => {
-    setKey((prevKey) => prevKey + 1);
-  }, [link]);
+  console.log(link);
 
   return (
     <>
-      {!link && (
-        <Image
-          key={key}
-          className="mb-1"
-          priority={true}
-          src={link}
-          width={50}
-          height={50}
-          alt={"No Image.."}
-        />
-      )}
       {link && (
         <Image
           key={key}
