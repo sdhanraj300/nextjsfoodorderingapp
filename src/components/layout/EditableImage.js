@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../../app/firebase";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useParams } from "next/navigation";
 
 const EditableImage = ({ link, setLink }) => {
   const [key, setKey] = useState(0);
-
+  const { id } = useParams();
+  console.log(id);
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -34,8 +36,7 @@ const EditableImage = ({ link, setLink }) => {
           });
           const downloadURL = await getDownloadURL(storageRef);
           setLink(downloadURL);
-          console.log(downloadURL);
-          const response = await fetch("/api/upload", {
+          const response = await fetch(`/api/upload/${id}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ image: downloadURL }),
@@ -50,8 +51,6 @@ const EditableImage = ({ link, setLink }) => {
       setLink("");
     }
   };
-
-  console.log(link);
 
   return (
     <>
