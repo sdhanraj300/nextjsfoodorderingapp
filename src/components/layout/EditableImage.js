@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useParams } from "next/navigation";
 
 const EditableImage = ({ link, setLink }) => {
-  const [key, setKey] = useState(0);
   const { id } = useParams();
   console.log(id);
   const handleFileChange = async (e) => {
@@ -36,10 +35,10 @@ const EditableImage = ({ link, setLink }) => {
           });
           const downloadURL = await getDownloadURL(storageRef);
           setLink(downloadURL);
-          const response = await fetch(`/api/upload/${id}`, {
+          const response = await fetch(`/api/upload/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: downloadURL }),
+            body: JSON.stringify({ image: downloadURL,id }),
           });
           if (!response.ok) {
             console.error("Failed to upload image to server.");
@@ -56,7 +55,6 @@ const EditableImage = ({ link, setLink }) => {
     <>
       {link && (
         <Image
-          key={key}
           className="w-full h-full mb-1"
           priority={true}
           src={link}

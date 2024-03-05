@@ -3,7 +3,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import firebase from "firebase/compat/app";
 import { Roboto } from "next/font/google";
-import AppProvider from "../app/AppProvider";
+import AppProvider from "../components/AppContext";
 const roboto = Roboto({ subsets: ["latin"], weight: ["400", "500", "700"] });
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,7 +14,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body className={roboto.className}>
         <ToastContainer
           position="top-center"

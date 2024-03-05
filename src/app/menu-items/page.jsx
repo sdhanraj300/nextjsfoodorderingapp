@@ -13,7 +13,7 @@ export default function MenuItemsPage() {
   useEffect(() => {
     fetch("/api/menuItems").then((res) => {
       res.json().then((menuItems) => {
-        console.log(menuItems)
+        // console.log(menuItems)
         setMenuItems(menuItems);
       });
     });

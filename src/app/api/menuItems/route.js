@@ -17,7 +17,7 @@ export async function PUT(req) {
 export async function GET(req) {
   mongoose.connect(process.env.MONGO_URL);
   const menuItems = await MenuItem.find({});
-  console.log(menuItems)
+  // console.log(menuItems)
   return Response.json(menuItems);
 }
 

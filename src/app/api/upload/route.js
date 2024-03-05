@@ -3,14 +3,17 @@ import { User } from "@/models/User";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 export async function POST(req) {
-  if (req.query) {
-    console.log("Request Query Parameters:", req.query);
-  }
   await mongoose.connect(process.env.MONGO_URL);
-  const body = await req.json();
-  const session = await getServerSession(authOptions);
-  const email = session?.user?.email;
-  const image = body.image;
-  await User.updateOne({ email }, { image: body.image });
+  const data = await req.json();
+  const { id, image } = data;
+  let filter = {};
+  if (id) {
+    filter = { id };
+  } else {
+    const session = await getServerSession(authOptions);
+    const email = session?.user?.email;
+    filter = { email };
+  }
+  await User.updateOne(filter, {image});
   return Response.json(true);
 }
